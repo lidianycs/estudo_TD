@@ -106,7 +106,7 @@ count_code_smells_lines_edited = full_join(proj1_lines_edited, code_smells_count
 count_code_smells_lines_edited$projectID = projectID
 
 #salva no banco
-dbWriteTable(con, "COUNT_LINES_TD", count_code_smells_lines_edited, append=TRUE)
+dbWriteTable(con, "DEVS_TD", count_code_smells_lines_edited, append=TRUE)
 
 
 end_time <- Sys.time()
