@@ -23,12 +23,12 @@ projectID = project_list[15]
 
 start_time <- Sys.time()
 
-for (i in 31:33){
+for (i in 22:33){
     projectID = project_list[i]
     
-    devs_data = dbGetQuery(dbcon, 'SELECT author, MAX(authorDate), MIN(authorDate)  
+    devs_data = dbGetQuery(dbcon, "SELECT author, MAX(authorDate), MIN(authorDate)  
                                       FROM GIT_COMMITS 
-                                      WHERE projectID = ? GROUP BY author'
+                                      WHERE projectID = ? AND merge='False' GROUP BY author"
                                       , params = c(projectID))
 
     #renomear colunas

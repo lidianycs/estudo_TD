@@ -4,7 +4,7 @@
 
 count_lines_TD = dbGetQuery(dbcon, "select author, linesEdited, codeSmells from  DEVS_TD")
 
-
+#remove quem não tem code smells
 count_lines_TD = na.omit(count_lines_TD)
 
 #eliminar os outliers

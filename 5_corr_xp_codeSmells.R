@@ -1,6 +1,6 @@
 #Fazer os Testes de correlação code smells por linhas editadas
 
-#carregar a dbcontagem de code smells e linhas editadas de cada dev
+#carregar a contagem de code smells e linhas editadas de cada dev
 
 devs_xp_TD = dbGetQuery(dbcon, "SELECT author, xp_in_days, codeSmells FROM DEVS_TD")
 
