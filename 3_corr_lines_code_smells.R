@@ -1,11 +1,11 @@
-#Fazer os Testes de correlação
+#Fazer os Testes de correlação code smells por linhas editadas
 
-#carregar a contagem de code smells e linhas editadas de cada dev
-sql_query = tbl(con, sql("select * from  COUNT_LINES_TD"))
-count_lines_TD = as.data.frame(sql_query)
-count_lines_TD[is.na(count_lines_TD)] = 0
+#carregar a dbcontagem de code smells e linhas editadas de cada dev
 
-#count_lines_TD = na.omit(count_lines_TD)
+count_lines_TD = dbGetQuery(dbcon, "select author, linesEdited, codeSmells from  DEVS_TD")
+
+
+count_lines_TD = na.omit(count_lines_TD)
 
 #eliminar os outliers
 # Q <- quantile(count_lines_TD$linesEdited, probs=c(.25, .75), na.rm = FALSE)
@@ -17,7 +17,7 @@ count_lines_TD[is.na(count_lines_TD)] = 0
 quantile(count_lines_TD$codeSmells)
 
 #REMOVE  QUARTIL
-count_lines_TD = count_lines_TD[count_lines_TD$codeSmells > quantile(count_lines_TD$codeSmells, p = 0.5),]
+count_lines_TD = count_lines_TD[count_lines_TD$codeSmells > quantile(count_lines_TD$codeSmells, p = 0.25),]
 quantile(count_lines_TD$codeSmells)
 
 #testes
@@ -37,13 +37,5 @@ plot(KLOC, KTD, pch = 19, ylim = c(0,40), xlim = c(0,250),  col = "lightblue")
 # Regression line
 abline(lm(KTD ~ KLOC), col = "red")
 
-# Pearson correlation
-text(paste("Correlation:", round(cor(x, y), 2)), x = 25, y = 95)
-
-hist(KLOC,
-     xlab = "Lines edited",
-     main = "Histogram of Lines edited",
-     breaks = 500
-) #
 
 

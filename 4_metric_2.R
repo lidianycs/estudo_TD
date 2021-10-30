@@ -14,8 +14,8 @@ library(dplyr)
 dbcon = dbConnect(SQLite(), "TechnicalDebtDataset_20200606.db") 
 
 #pega lista de projetos analisados
-sql_query = tbl(dbcon, sql("select projectID from PROJECTS "))
-project_list = as.data.frame(sql_query %>% select(projectID))
+
+project_list = dbGetQuery(dbcon, "SELECT projectID FROM PROJECTS ")
 project_list = project_list[["projectID"]]
 
 #pega um projeto (projectID) para analisar
