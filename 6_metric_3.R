@@ -31,14 +31,14 @@ for (i in project_list){
   projectID = i
   
   
-  devs_data = dbGetQuery(dbcon, "SELECT author   
-                                      FROM GIT_COMMITS 
-                                      WHERE projectID = ? AND merge='False'"
+ 
+  
+  devs_data = dbGetQuery(dbcon, "SELECT COUNT(DISTINCT commitHash) AS n_commits, 
+                                  author AS [author] 
+                                  FROM GIT_COMMITS 
+                                  WHERE projectID = ? AND merge='False'
+                                  GROUP BY author"
                          , params = c(projectID))
-  
-  devs_data =  devs_data %>% count(author)
-  
-  colnames(devs_data) <- c('author','n_commits')
   
   dbExecute(dbcon, "UPDATE DEVS_TD 
                       SET n_commits =:n_commits
