@@ -36,8 +36,7 @@ for (i in project_list){
     GIT_COMMITS.projectID AS [projectID] 
     FROM GIT_COMMITS 
     INNER JOIN SONAR_ISSUES ON GIT_COMMITS.commitHash=SONAR_ISSUES.creationCommitHash
-    WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.type ='CODE_SMELL' GROUP BY GIT_COMMITS.author
-"
+    WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.type ='CODE_SMELL' GROUP BY GIT_COMMITS.author"
                          , params = c(projectID))
   
   dbExecute(dbcon, "UPDATE DEVS_TD 
