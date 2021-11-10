@@ -16,7 +16,7 @@ con <- dbConnect(SQLite(), "TechnicalDebtDataset_20200606.db")
 
 #pega lista de projetos analisados
 sql_query = tbl(con, sql("select DISTINCT projectID from GIT_COMMITS "))
-project_list = as.data.frame(sql_query %>% select(projectID))
+project_list = as.data.frame(sql_query %>% select(projectID))  # todos os projetos
 project_list = project_list[["projectID"]]
 
 #pega um projeto (projectID) para analisar
