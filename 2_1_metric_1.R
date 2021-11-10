@@ -32,11 +32,11 @@ for (i in project_list){
   
   devs_data = dbGetQuery(dbcon, 
   "SELECT COUNT (DISTINCT SONAR_ISSUES.creationCommitHash) AS sonar_smells, 
-  GIT_COMMITS.author AS [author],
-  GIT_COMMITS.projectID AS [projectID] 
-  FROM GIT_COMMITS 
-INNER JOIN SONAR_ISSUES ON GIT_COMMITS.commitHash=SONAR_ISSUES.creationCommitHash
-WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.type ='CODE_SMELL' GROUP BY GIT_COMMITS.author
+    GIT_COMMITS.author AS [author],
+    GIT_COMMITS.projectID AS [projectID] 
+    FROM GIT_COMMITS 
+    INNER JOIN SONAR_ISSUES ON GIT_COMMITS.commitHash=SONAR_ISSUES.creationCommitHash
+    WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.type ='CODE_SMELL' GROUP BY GIT_COMMITS.author
 "
                          , params = c(projectID))
   
