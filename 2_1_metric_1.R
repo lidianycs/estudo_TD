@@ -53,10 +53,10 @@ print(end_time - start_time)
 
 ###
 #CODE SMELLS
-# "SELECT COUNT (DISTINCT SONAR_ISSUES.creationCommitHash) AS code_smells, 
+# "SELECT COUNT (DISTINCT SONAR_ISSUES.creationCommitHash) AS code_smells,
 #   GIT_COMMITS.author AS [author],
-#   GIT_COMMITS.projectID AS [projectID] 
-#   FROM GIT_COMMITS 
+#   GIT_COMMITS.projectID AS [projectID]
+#   FROM GIT_COMMITS
 # INNER JOIN SONAR_ISSUES ON GIT_COMMITS.commitHash=SONAR_ISSUES.creationCommitHash
 # WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.squid LIKE 'code_smells:%' GROUP BY GIT_COMMITS.author
 # "
