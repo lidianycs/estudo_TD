@@ -11,12 +11,11 @@ library(dbplyr)
 library(dplyr)
 
 
-#conecta ao BD
-con <- dbConnect(SQLite(), "TechnicalDebtDataset_20200606.db")  
+#dbconecta ao BD
+dbcon <- dbConnect(SQLite(), "TechnicalDebtDataset_20200606.db")  
 
 #pega lista de projetos analisados
-sql_query = tbl(con, sql("select DISTINCT projectID from GIT_COMMITS "))
-project_list = as.data.frame(sql_query %>% select(projectID))  # todos os projetos
+project_list = dbGetQuery(dbcon, "SELECT projectID FROM PROJECTS ")
 project_list = project_list[["projectID"]]
 
 #pega um projeto (projectID) para analisar
@@ -24,17 +23,14 @@ projectID = project_list[1]
 
 start_time <- Sys.time()
 
-# Consulta 1 - Total de Linhas Adicionadas e Removidas pelos desenvolvedores de um projeto
+# dbconsulta 1 - Total de Linhas Adicionadas e Removidas pelos desenvolvedores de um projeto
 # projectID
-sql_query = toString(paste(" 
-  SELECT GIT_COMMITS.projectID,GIT_COMMITS.commitHash,GIT_COMMITS.author, 
+
+proj1_count_lines = dbGetQuery(dbcon, "SELECT GIT_COMMITS.projectID,GIT_COMMITS.commitHash,GIT_COMMITS.author, 
   GIT_COMMITS_CHANGES.linesAdded,GIT_COMMITS_CHANGES.linesRemoved FROM GIT_COMMITS 
   INNER JOIN GIT_COMMITS_CHANGES ON GIT_COMMITS.commitHash=GIT_COMMITS_CHANGES.commitHash
-  WHERE GIT_COMMITS.merge='False' and GIT_COMMITS.projectID='", projectID, "'", sep = "")) 
-
-#transforma a consulta em um dataframe
-data = tbl(con, sql(sql_query))
-proj1_count_lines = as.data.frame(data %>% select(projectID, commitHash, author, linesAdded, linesRemoved))
+  WHERE GIT_COMMITS.merge='False' and GIT_COMMITS.projectID= ? ",
+           params = c(projectID))
 
 #Calcular total de linhas editadas por dev
 
@@ -60,32 +56,30 @@ proj1_lines_edited = proj1_lines_edited %>% select(author, linesEdited)
 rm(temp_data)
 
 
-#Consulta 2 - SELECIONAR COMMITS COM CODE SMELLS DO PROJETO
+#dbconsulta 2 - SELECIONAR COMMITS COM CODE SMELLS DO PROJETO
 
 
 #SELECIONAR COMMITS COM CODE SMELLS DO PROJETO
-sql_query = toString(paste(" SELECT SONAR_ISSUES.creationCommitHash, 
+proj1_td = dbGetQuery(dbcon, " SELECT SONAR_ISSUES.creationCommitHash, 
                            SONAR_ISSUES.type from SONAR_ISSUES 
-                           WHERE SONAR_ISSUES.projectID='", 
-                           projectID , "' and SONAR_ISSUES.type ='CODE_SMELL'", sep = "")) 
+                           WHERE SONAR_ISSUES.projectID= ? 
+                       AND SONAR_ISSUES.type ='CODE_SMELL'", 
+                       params = c(projectID)) 
 
-#dataframe
-data = tbl(con, sql(sql_query))
-proj1_td = as.data.frame(data %>% select(creationCommitHash, type))
 
 #renomear colunas
 colnames(proj1_td) <- c('commitHash','type')
 
-#faz a contagem de code smells por commits
+#faz a dbcontagem de code smells por commits
 library("plyr")
 x = count(proj1_td, 'commitHash')
-detach("package:plyr")#evitar conflito com o pacote dplyr
+detach("package:plyr")#evitar dbconflito com o pacote dplyr
 
 #seleciona só as colunas necessárias 
-#contém a lista de commits de cada dev
+#dbcontém a lista de commits de cada dev
 temp_data = proj1_count_lines %>% select(commitHash, author)
 
-#inner_join com a lista de autores e a contagem de commits com smells
+#inner_join com a lista de autores e a dbcontagem de commits com smells
 committers_code_smells = inner_join(temp_data, x, by="commitHash") %>% group_by(commitHash) %>% filter (! duplicated(commitHash)) 
 
 committers_code_smells = committers_code_smells %>% ungroup() %>% select(author, freq)
@@ -106,7 +100,7 @@ count_code_smells_lines_edited = full_join(proj1_lines_edited, code_smells_count
 count_code_smells_lines_edited$projectID = projectID
 
 #salva no banco
-dbWriteTable(con, "COUNT_LINES_TD", count_code_smells_lines_edited, append=TRUE)
+dbWriteTable(dbcon, "DEVS_TD", count_code_smells_lines_edited, append=TRUE)
 
 
 end_time <- Sys.time()
@@ -114,7 +108,7 @@ end_time <- Sys.time()
 print(end_time - start_time)
 
 #rodar no final
-dbDisconnect(con)
+dbDisdbconnect(dbcon)
 rm(proj1_count_lines)
 rm(proj1_lines_edited)
 rm(proj1_td)
@@ -123,8 +117,6 @@ rm(projectID)
 rm(code_smells_count)
 rm(temp_data)
 rm(x)
-rm(sql_query)
-rm(data)
-rm(con)
+rm(dbcon)
 
 
