@@ -34,8 +34,12 @@ KTD = (count_lines_TD$codeSmells)/1000
 # Creating the plot
 plot(KLOC, KTD, pch = 19, ylim = c(0,40), xlim = c(0,250),  col = "lightblue")
 
+#plot(KLOC, KTD, pch = 19, ylim = c(0,40), xlim = c(0,250),  col = "lightblue")
+
 # Regression line
 abline(lm(KTD ~ KLOC), col = "red")
+
+
 
 
 
