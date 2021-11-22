@@ -39,7 +39,7 @@ for (i in project_list){
     WHERE GIT_COMMITS.projectID= ? AND GIT_COMMITS.merge='False' AND SONAR_ISSUES.type ='CODE_SMELL' GROUP BY GIT_COMMITS.author"
                          , params = c(projectID))
   
-  dbExecute(dbcon, "UPDATE DEVS_TD 
+  dbExecute(dbcon, "UPDATE DEVS_TD
                       SET sonar_smells =:sonar_smells
                       WHERE author = :author AND projectID =:projectID ",
             params=data.frame(sonar_smells=devs_data$sonar_smells,
