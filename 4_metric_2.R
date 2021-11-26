@@ -62,9 +62,6 @@
                                     xp_in_weeks=devs_xp$xp_in_weeks,
                                     author=devs_xp$author, projectID=projectID))
 
-
-
-    
   
 }
   
