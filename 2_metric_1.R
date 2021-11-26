@@ -39,21 +39,24 @@ for (i in project_list){
                           	AND GIT_COMMITS.projectID=?
                           GROUP BY GIT_COMMITS.author"
                          , params = c(projectID))
-  
+
   devs_data$projectID = projectID
-  
+
   #transformar char em num
-  devs_data = transform(devs_data, linesAdded = as.numeric(linesAdded), 
+  devs_data = transform(devs_data, linesAdded = as.numeric(linesAdded),
                         linesRemoved = as.numeric(linesRemoved))
-  
+
   #soma as colunas pra chegar ao número de linhas editadas
   devs_data$linesEdited = devs_data$linesAdded + devs_data$linesRemoved
-  
-  dbExecute(dbcon, "UPDATE DEVS_TD 
+ 
+
+  dbExecute(dbcon, "UPDATE DEVS_TD
                       SET linesEdited =:linesEdited
                       WHERE author = :author AND projectID =:projectID ",
             params=data.frame(linesEdited=devs_data$linesEdited,
                               author=devs_data$author, projectID=devs_data$projectID))
+
+  
 }
 
 end_time <- Sys.time()
