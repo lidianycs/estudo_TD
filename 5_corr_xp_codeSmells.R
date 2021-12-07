@@ -2,7 +2,7 @@
 
 #carregar a contagem de code smells e linhas editadas de cada dev
 
-devs_xp_TD = dbGetQuery(dbcon, "SELECT author, xp_in_days, codeSmells FROM DEVS_TD")
+devs_xp_TD = dbGetQuery(dbcon, "SELECT author, xp_in_days, code_smells FROM DEVS_TD")
 
 #remove quem não tem code smells
 devs_xp_TD = na.omit(devs_xp_TD)
@@ -19,22 +19,22 @@ devs_xp_TD["xp_in_days"][devs_xp_TD["xp_in_days"] == 0] <- 1
 # devs_xp_TD = eliminated
 
 #calcular quartis
-quantile(devs_xp_TD$codeSmells)
+quantile(devs_xp_TD$code_smells)
 
 #REMOVE  QUARTIL
-devs_xp_TD = devs_xp_TD[devs_xp_TD$codeSmells > quantile(devs_xp_TD$codeSmells, p = 0.25),]
+devs_xp_TD = devs_xp_TD[devs_xp_TD$code_smells > quantile(devs_xp_TD$code_smells, p = 0.25),]
 quantile(devs_xp_TD$codeSmells)
 
 #testes
 shapiro.test(devs_xp_TD$xp_in_days)
-shapiro.test(devs_xp_TD$codeSmells)
+shapiro.test(devs_xp_TD$code_smells)
 
-wilcox.test(devs_xp_TD$xp_in_days, devs_xp_TD$codeSmells, paired=FALSE)
+wilcox.test(devs_xp_TD$xp_in_days, devs_xp_TD$code_smells, paired=FALSE)
 
-cor.test(devs_xp_TD$xp_in_days,devs_xp_TD$codeSmells, method = "pearson") 
+cor.test(devs_xp_TD$xp_in_days,devs_xp_TD$code_smells, method = "pearson") 
 
 KXP_DAYS = (devs_xp_TD$xp_in_days)
-KTD = (devs_xp_TD$codeSmells)
+KTD = (devs_xp_TD$code_smells)
 
 # Creating the plot
 plot(KXP_DAYS, KTD,  pch = 19, col = "lightblue")
