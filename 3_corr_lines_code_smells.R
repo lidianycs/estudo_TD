@@ -1,8 +1,17 @@
 #Fazer os Testes de correlação code smells por linhas editadas
 
+library(DBI)
+library(RSQLite)
+library(dbplyr)
+library(dplyr)
+
+
+#conecta ao BD
+dbcon = dbConnect(SQLite(), "DEVS_TD.db") 
+
 #carregar a dbcontagem de code smells e linhas editadas de cada dev
 
-count_lines_TD = dbGetQuery(dbcon, "select author, linesEdited, codeSmells from  DEVS_TD")
+count_lines_TD = dbGetQuery(dbcon, "select author, linesEdited, code_smells  from  DEVS_TD")
 
 #remove quem não tem code smells
 count_lines_TD = na.omit(count_lines_TD)
@@ -14,30 +23,29 @@ count_lines_TD = na.omit(count_lines_TD)
 # count_lines_TD = eliminated
 
 #calcular quartis
-quantile(count_lines_TD$codeSmells)
+quantile(count_lines_TD$code_smells)
 
 #REMOVE  QUARTIL
-count_lines_TD = count_lines_TD[count_lines_TD$codeSmells > quantile(count_lines_TD$codeSmells, p = 0.25),]
-quantile(count_lines_TD$codeSmells)
+# count_lines_TD = count_lines_TD[count_lines_TD$code_smells > quantile(count_lines_TD$code_smells, p = 0.25),]
+# quantile(count_lines_TD$code_smells)
 
 #testes
 shapiro.test(count_lines_TD$linesEdited)
-shapiro.test(count_lines_TD$codeSmells)
+shapiro.test(count_lines_TD$code_smells)
 
-wilcox.test(count_lines_TD$linesEdited, count_lines_TD$codeSmells, paired=FALSE)
+wilcox.test(count_lines_TD$linesEdited, count_lines_TD$code_smells, paired=FALSE)
 
-cor.test(count_lines_TD$linesEdited,count_lines_TD$codeSmells, method = "pearson") 
+cor.test(count_lines_TD$linesEdited,count_lines_TD$code_smells, method = "pearson")
 
 KLOC = (count_lines_TD$linesEdited)/1000
-KTD = (count_lines_TD$codeSmells)/1000
-
+TD = (count_lines_TD$code_smells)
 # Creating the plot
-plot(KLOC, KTD, pch = 19, ylim = c(0,40), xlim = c(0,250),  col = "lightblue")
+plot(KLOC, TD, pch = 23, ylim = c(0,100), xlim = c(0,800),  col = "black", main="TD(Code Smells) x KLOC")
 
 #plot(KLOC, KTD, pch = 19, ylim = c(0,40), xlim = c(0,250),  col = "lightblue")
 
 # Regression line
-abline(lm(KTD ~ KLOC), col = "red")
+abline(lm(TD ~ KLOC), col = "red")
 
 
 
